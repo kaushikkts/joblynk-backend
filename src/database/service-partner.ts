@@ -1,6 +1,5 @@
 import {connectToDatabase} from "./database-functions";
 import {MongoClient, ObjectId} from "mongodb";
-import {ContractorModel} from "../models/contractor.model";
 import {ServicePartnersModel} from "../models/service-partners.model";
 
 const DB_NAME = 'joblynk';
@@ -39,10 +38,6 @@ export const createServicePartner = async (servicePartner: ServicePartnersModel)
     let client: MongoClient;
     try {
         client = await connectToDatabase();
-        // return await client.db(DB_NAME).collection(COLLECTION).createIndex({"servicePartners.primaryContactEmail": 1}, {unique: true});
-        // return await client.db(DB_NAME).collection(COLLECTION).updateOne({_id: new ObjectId(servicePartner.contractorId)},{$set: {
-        //         "servicePartners": servicePartner
-        //     }})
         const existingServicePartner = await client.db(DB_NAME).collection(COLLECTION).findOne({"servicePartners.primaryContactEmail": servicePartner.primaryContactEmail})
         if (!existingServicePartner) {
             return await client.db(DB_NAME).collection(COLLECTION).updateOne({_id: new ObjectId(servicePartner.contractorId)}, {$addToSet: {

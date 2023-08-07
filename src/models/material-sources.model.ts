@@ -1,7 +1,6 @@
 export interface MaterialSourcesModel {
-  id: string;
   contractorId: string;
-  materialAndSources: MaterialAndSources[]
+  material: MaterialAndSources[];
 }
 
 export interface MaterialAndSources {
