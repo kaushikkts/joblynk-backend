@@ -1,6 +1,6 @@
 import express from "express";
 import {
-    createServicePartner,
+    createServicePartner, deleteServicePartner,
     getAllServicePartners,
     updatePartner
 } from "../database/service-partner";
@@ -52,13 +52,13 @@ export const updateServicePartner = async (req: express.Request, res: express.Re
         res.status(400).json(e);
     }
 }
-//
-// export const deleteAContractor = async (req: express.Request, res: express.Response) => {
-//     const id: string = req.body['id'];
-//     try {
-//         const del = await deleteContractor(id);
-//         return res.json(del);
-//     } catch (e) {
-//         res.status(400).json(e);
-//     }
-// }
+
+export const deletePartner = async (req: express.Request, res: express.Response) => {
+    const data: ServicePartnersModel = req.body;
+    try {
+        const del = await deleteServicePartner(data);
+        return res.json(del);
+    } catch (e) {
+        res.status(400).json(e);
+    }
+}

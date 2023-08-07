@@ -74,17 +74,17 @@ export const updatePartner = async (servicePartner: ServicePartnersModel) => {
 
                 $set: {
                     "servicePartners.$.name": servicePartner.name,
-                    "servicePartners.primaryContactFirstName": servicePartner.primaryContactFirstName,
-                    "servicePartners.primaryContactLastName": servicePartner.primaryContactLastName,
-                    "servicePartners.primaryContactPhone": servicePartner.primaryContactPhone,
-                    "servicePartners.primaryContactEmail": servicePartner.primaryContactEmail,
-                    "servicePartners.secondaryContactFirstName": servicePartner.secondaryContactFirstName,
-                    "servicePartners.secondaryContactLastName": servicePartner.secondaryContactLastName,
-                    "servicePartners.secondaryContactPhone": servicePartner.secondaryContactPhone,
-                    "servicePartners.secondaryContactEmail": servicePartner.secondaryContactEmail,
-                    "servicePartners.services": servicePartner.services,
-                    "servicePartners.qualityOfWork": servicePartner.qualityOfWork,
-                    "servicePartners.notes": servicePartner.notes
+                    "servicePartners.$.primaryContactFirstName": servicePartner.primaryContactFirstName,
+                    "servicePartners.$.primaryContactLastName": servicePartner.primaryContactLastName,
+                    "servicePartners.$.primaryContactPhone": servicePartner.primaryContactPhone,
+                    "servicePartners.$.primaryContactEmail": servicePartner.primaryContactEmail,
+                    "servicePartners.$.secondaryContactFirstName": servicePartner.secondaryContactFirstName,
+                    "servicePartners.$.secondaryContactLastName": servicePartner.secondaryContactLastName,
+                    "servicePartners.$.secondaryContactPhone": servicePartner.secondaryContactPhone,
+                    "servicePartners.$.secondaryContactEmail": servicePartner.secondaryContactEmail,
+                    "servicePartners.$.services": servicePartner.services,
+                    "servicePartners.$.qualityOfWork": servicePartner.qualityOfWork,
+                    "servicePartners.$.notes": servicePartner.notes
                 }
             });
     } catch (e) {
@@ -95,15 +95,23 @@ export const updatePartner = async (servicePartner: ServicePartnersModel) => {
     }
 }
 
-// export const deleteServicePartner = async (id: string) => {
-//     let client: MongoClient;
-//     try {
-//         client = await connectToDatabase();
-//         return await client.db(DB_NAME).collection(COLLECTION).deleteOne({_id: new ObjectId(id)});
-//     } catch (e) {
-//         console.log(`Error in updateContractor database/contractor.ts file : - ${e}`);
-//         throw e;
-//     } finally {
-//         await client.close();
-//     }
-// }
+export const deleteServicePartner = async (servicePartner: ServicePartnersModel) => {
+    let client: MongoClient;
+    try {
+        client = await connectToDatabase();
+        return await client.db(DB_NAME).collection(COLLECTION).updateOne({_id: new ObjectId(servicePartner.contractorId)}, {
+            $pull: {
+                "servicePartners": {
+                        "primaryContactEmail" : servicePartner.primaryContactEmail,
+                }
+            }
+        }, {
+            upsert: false
+        });
+    } catch (e) {
+        console.log(`Error in deleting service partner database/service-partner.ts file : - ${e}`);
+        throw e;
+    } finally {
+        await client.close();
+    }
+}
