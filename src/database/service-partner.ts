@@ -34,7 +34,9 @@ export const getAllServicePartners = async (contractorId: string) => {
 //     }
 // }
 //
-export const createServicePartner = async (servicePartner: ServicePartnersModel) => {
+export const createServicePartner = async (servicePartner: any) => {
+    // console.log(servicePartner);
+    console.log('inside the db', servicePartner);
     let client: MongoClient;
     try {
         client = await connectToDatabase();

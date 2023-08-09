@@ -11,6 +11,7 @@ export interface ContractorModel {
   lastName: string;
   primaryContact: string;
   secondaryContact: string;
+  address: string;
   email: string;
   subcontractors?: SubcontractorModel[];
   jobs?: JobModel[];

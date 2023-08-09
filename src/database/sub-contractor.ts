@@ -12,7 +12,7 @@ export const createSubContractor = async (contractorId: string, subcontractor: S
     try {
         client = await connectToDatabase();
         const findSubContractor = await client.db(DB_NAME).collection(SUBCONTRACTOR_COLLECTION).findOne({"primaryContactEmail": subcontractor.primaryContactEmail});
-        if (findSubContractor !== null) {
+        if (findSubContractor !== null && contractorId !== null) {
             // find if contractor already has a reference to it
             const contractor = await client.db(DB_NAME).collection(CONTRACTOR_COLLECTION).findOne({_id: new ObjectId(contractorId), "subcontractors": findSubContractor._id});
             if (contractor !== null) {

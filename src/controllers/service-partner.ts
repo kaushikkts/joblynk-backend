@@ -31,7 +31,8 @@ export const findAllServicePartners = async(req: express.Request, res: express.R
 // }
 //
 export const createNewServicePartner = async (req: express.Request, res: express.Response) => {
-    const servicePartnersData: ServicePartnersModel = req.body;
+
+    const servicePartnersData: any = req.body;
     try {
         const result: any = await createServicePartner(servicePartnersData);
         if (result?.alreadyExists) {

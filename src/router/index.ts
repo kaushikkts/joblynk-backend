@@ -5,6 +5,7 @@ import contractorRoutes from "./contractor-routes";
 import servicePartnerRoutes from "./service-partner-routes";
 import materialSourcesRoutes from "./material-sources-routes";
 import subcontractorRoutes from "./subcontractor.routes";
+import authentication from "./authentication";
 const router = express.Router();
 
 export default ():express.Router => {
@@ -12,5 +13,6 @@ export default ():express.Router => {
     servicePartnerRoutes(router);
     materialSourcesRoutes(router);
     subcontractorRoutes(router);
+    authentication(router);
     return router;
 }
