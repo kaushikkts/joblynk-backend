@@ -35,7 +35,7 @@ export const register = async (userDetails: ContractorModel, password: string) =
 
         const encryptedPassword = await bcrypt.hash(password, 12);
         console.log('generating token');
-        const token = jwt.sign({email: userDetails.email}, 'secret', {expiresIn: '5m'})
+        const token = jwt.sign({email: userDetails.email}, 'secret', {expiresIn: '12h'})
         console.log(token);
         const generatedId = new ObjectId();
         // create new user in users table
@@ -82,7 +82,7 @@ export const login = async (email: string, password: string) => {
         console.log(isPasswordSame);
         if (user && (await bcrypt.compare(password, user.password))) {
             console.log('entered here');
-            token = jwt.sign({email: email}, 'secret', {expiresIn: '5m'});
+            token = jwt.sign({email: email}, 'secret', {expiresIn: '12h'});
             await client.db(DB_NAME).collection(COLLECTION_USERS).updateOne({email: email }, {
                 $set:  {
                     token: token

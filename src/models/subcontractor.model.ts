@@ -3,8 +3,7 @@ import { DocumentsModel } from "./documents.model";
 import { TradesmanQuestionnaireModel } from "./tradesman-questionnaire.model";
 
 export interface SubcontractorModel {
-  id: string;
-  contractor: string;
+  _id: any;
   name: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
@@ -17,7 +16,8 @@ export interface SubcontractorModel {
   secondaryContactPhone?: string;
   address: string;
   documents: DocumentsModel; // view all documents can be a modal
-  trades: []; // will add later
+  primaryTrade: string;
+  otherTrades: []; // will add later
   qualityOfWork: string;
   areasOfImprovement: string;
   notes: string;

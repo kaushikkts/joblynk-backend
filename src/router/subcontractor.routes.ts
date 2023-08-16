@@ -1,14 +1,14 @@
 import express from "express";
 import {
     createNewSubContractor,
-    delSubContractor, findASubContractor, getAllSubContractors
+    delSubContractor, findASubContractor, getAllSubContractors, updateSubcontractor
 } from "../controllers/sub-contractor";
+import {verifyToken} from "../middleware/auth-verify";
 
 export default (router: express.Router) => {
-    router.post('/subcontractor/create', createNewSubContractor);
-    router.get('/subcontractor/findSubContractor/:id', findASubContractor);
-    router.get('/subcontractor/findAllSubContractors', getAllSubContractors);
-    // router.post('/service-partner/create', createNewServicePartner);
-    // router.put('/service-partner/update', updateServicePartner);
-    router.delete('/subcontractor/delete', delSubContractor);
+    router.post('/subcontractor/create',verifyToken, createNewSubContractor);
+    router.get('/subcontractor/findSubContractor/:contractorId/:subcontractorId',verifyToken, findASubContractor);
+    router.get('/subcontractor/findAllSubContractors/:contractorId',verifyToken, getAllSubContractors);
+    router.put('/subcontractor/update', verifyToken, updateSubcontractor);
+    router.delete('/subcontractor/delete', verifyToken, delSubContractor);
 }

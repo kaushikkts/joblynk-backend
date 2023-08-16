@@ -11,18 +11,14 @@ app.use(cors({
     credentials: true
 }));
 
-
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use("/", router());
 
-
 const server = http.createServer(app);
 
 server.listen(3000, () => {
     console.log('Server running on 3000');
 })
-
-

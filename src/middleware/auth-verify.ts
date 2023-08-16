@@ -8,8 +8,11 @@ export const verifyToken = (req, res, next) => {
         return res.status(403).json("A token is required for authentication");
     }
     try {
+        console.log('in verify token');
+        console.log(jwt.verify(token, 'secret'));
         req.user = jwt.verify(token, 'secret');
     } catch (err) {
+        console.log(err);
         if (err.hasOwnProperty("expiredAt")) {
             return res.status(401).json({
                 isExpiredToken: true

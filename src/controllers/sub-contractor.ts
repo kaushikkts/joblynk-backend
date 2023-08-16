@@ -1,17 +1,17 @@
 import express from "express";
 
-import {SubcontractorModel} from "../models/subcontractor.model";
 import {
     createSubContractor,
     deleteSubContractor,
     findAllSubContractors,
-    findSubContractor
+    findSubContractor, updateSubContractor
 } from "../database/sub-contractor";
 
 
 export const createNewSubContractor = async (req: express.Request, res: express.Response) => {
+    // console.log('controller value', req.body);
     // console.log('controller', req.body.contractorId, req.body.subcontractor);
-    const subcontractor: any = req.body.subcontractor;
+    const subcontractor: any = req.body?.subcontractor;
     const contractorId: string = req.body.contractorId;
     try {
         const saveSubcontractor = await createSubContractor(contractorId, subcontractor);
@@ -22,9 +22,10 @@ export const createNewSubContractor = async (req: express.Request, res: express.
 }
 
 export const delSubContractor = async (req: express.Request, res: express.Response) => {
-    const id = req.body?.subcontractorId;
+    const subcontractorId = req.body?.subcontractorId;
+    const contractorId = req.body?.contractorId;
     try {
-        const result = await deleteSubContractor(id);
+        const result = await deleteSubContractor(subcontractorId, contractorId);
         return res.json(result);
     } catch (e) {
         res.status(400).json(e);
@@ -32,21 +33,34 @@ export const delSubContractor = async (req: express.Request, res: express.Respon
 }
 
 export const findASubContractor = async (req: express.Request, res: express.Response) => {
-    const id = req.params?.id;
-    console.log(id);
+    const contractorId = req.params?.contractorId;
+    const subcontractorId = req.params?.subcontractorId;
+    console.log('Find a subcontractor: - ', contractorId, subcontractorId);
     try {
-        const result = await findSubContractor(id);
+        const result = await findSubContractor(contractorId, subcontractorId);
+        return res.json(result);
+    } catch (e) {
+        return res.status(400).json(e);
+    }
+}
+
+export const getAllSubContractors = async (req: express.Request, res: express.Response) => {
+    const contractorId = req.params?.contractorId;
+    try {
+        const result = await findAllSubContractors(contractorId);
         return res.json(result);
     } catch (e) {
         res.status(400).json(e);
     }
 }
 
-export const getAllSubContractors = async (req: express.Request, res: express.Response) => {
+export const updateSubcontractor = async (req: express.Request, res: express.Response) => {
+    const subcontractor = req?.body?.subcontractor;
+    const contractorId = req?.body.contractorId;
     try {
-        const result = await findAllSubContractors();
-        return res.json(result);
+        const result = updateSubContractor(contractorId, subcontractor);
+        res.json(result);
     } catch (e) {
-        res.status(400).json(e);
+        return res.status(400).json(e);
     }
 }
