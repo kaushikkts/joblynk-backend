@@ -48,6 +48,7 @@ export const getAllSubContractors = async (req: express.Request, res: express.Re
     const contractorId = req.params?.contractorId;
     try {
         const result = await findAllSubContractors(contractorId);
+        console.log(result);
         return res.json(result);
     } catch (e) {
         res.status(400).json(e);

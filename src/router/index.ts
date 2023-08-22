@@ -6,6 +6,7 @@ import servicePartnerRoutes from "./service-partner-routes";
 import materialSourcesRoutes from "./material-sources-routes";
 import subcontractorRoutes from "./subcontractor.routes";
 import authentication from "./authentication";
+import ses from "./amazon-ses";
 const router = express.Router();
 
 export default ():express.Router => {
@@ -14,5 +15,6 @@ export default ():express.Router => {
     materialSourcesRoutes(router);
     subcontractorRoutes(router);
     authentication(router);
+    ses(router);
     return router;
 }
