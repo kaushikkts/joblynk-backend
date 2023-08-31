@@ -1,12 +1,12 @@
 
 import express from "express";
 import {login, register, verifyUser} from "../database/authentication";
-import {UserModel} from "../models/user.model";
 
 export const registerUser = async (req: express.Request, res: express.Response) => {
-    const { userDetails, password } = req.body;
+    console.log(`body parameters in registerUser method in controllers/authentication.ts file : - ${JSON.stringify(req.body)}`);
+    const userDetails = req?.body;
     try {
-        const result = await register(userDetails, password);
+        const result = await register(userDetails);
         return res.json(result);
     } catch (e) {
         res.status(400).json(e);
@@ -20,7 +20,8 @@ export const loginUser = async (req: express.Request, res: express.Response) => 
         return res.json({
             id: result?._id,
             email: result?.email,
-            token: result?.token
+            token: result?.token,
+            role: result?.role
 
         });
     } catch (e) {

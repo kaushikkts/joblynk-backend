@@ -4,7 +4,7 @@ import {
     createSubContractor,
     deleteSubContractor,
     findAllSubContractors,
-    findSubContractor, updateSubContractor
+    findSubContractor, sendRegisterSubContractorEmail, updateSubContractor
 } from "../database/sub-contractor";
 
 
@@ -46,6 +46,7 @@ export const findASubContractor = async (req: express.Request, res: express.Resp
 
 export const getAllSubContractors = async (req: express.Request, res: express.Response) => {
     const contractorId = req.params?.contractorId;
+
     try {
         const result = await findAllSubContractors(contractorId);
         console.log(result);
@@ -61,6 +62,18 @@ export const updateSubcontractor = async (req: express.Request, res: express.Res
     try {
         const result = updateSubContractor(contractorId, subcontractor);
         res.json(result);
+    } catch (e) {
+        return res.status(400).json(e);
+    }
+}
+
+export const registerSubEmailSend = async (req: express.Request, res: express.Response) => {
+    const { subcontractorEmail, contractorId } = req?.body;
+    // console.log(req.body);
+    // console.log('Entered registerSubEmailSend: - ', contractorId, subcontractorEmail);
+    try {
+        const result = sendRegisterSubContractorEmail(contractorId, subcontractorEmail);
+        res.json('test');
     } catch (e) {
         return res.status(400).json(e);
     }

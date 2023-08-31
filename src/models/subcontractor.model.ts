@@ -22,6 +22,7 @@ export interface SubcontractorModel {
   areasOfImprovement: string;
   notes: string;
   status: string;
+  hasSentEmail: boolean;
   jobs: JobModel[];
   tradesmanQuestionnaire: TradesmanQuestionnaireModel;
 }
