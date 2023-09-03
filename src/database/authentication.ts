@@ -102,7 +102,7 @@ export const login = async (email: string, password: string) => {
         console.log(isPasswordSame);
         if (user && (await bcrypt.compare(password, user.password))) {
             console.log('entered here');
-            token = jwt.sign({email: email}, 'secret', {expiresIn: '12h'});
+            token = jwt.sign({email: email}, 'secret', {expiresIn: '72h'});
             await client.db(DB_NAME).collection(COLLECTION_USERS).updateOne({email: email }, {
                 $set:  {
                     token: token

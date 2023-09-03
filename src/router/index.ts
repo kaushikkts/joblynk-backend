@@ -7,6 +7,7 @@ import materialSourcesRoutes from "./material-sources-routes";
 import subcontractorRoutes from "./subcontractor.routes";
 import authentication from "./authentication";
 import ses from "./amazon-ses";
+import uploadFilesToS3 from './upload-files';
 const router = express.Router();
 
 export default ():express.Router => {
@@ -16,5 +17,7 @@ export default ():express.Router => {
     subcontractorRoutes(router);
     authentication(router);
     ses(router);
+    uploadFilesToS3(router);
+
     return router;
 }
