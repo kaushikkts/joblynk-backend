@@ -1,9 +1,9 @@
-import {StatusEnum} from "../enums/status.enum";
+
 
 export interface TradesmanQuestionnaireModel {
   id: string;
   contractorId: string;
-  status: StatusEnum;
+  status: string;
   date: Date;
   name: string;
   primaryContact: string;

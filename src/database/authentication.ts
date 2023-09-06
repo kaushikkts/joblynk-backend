@@ -1,10 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import {MongoClient, ObjectId} from "mongodb";
-import {connectToDatabase} from "./database-functions";
-import {ContractorModel} from "../models/contractor.model";
-import {UserModel} from "../models/user.model";
+import { MongoClient, ObjectId } from "mongodb";
+import { connectToDatabase } from "./database-functions";
 
 const DB_NAME = 'joblynk';
 const COLLECTION_USERS = 'users';

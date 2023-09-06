@@ -1,11 +1,8 @@
-import express from "express";
-import { S3Client }  from '@aws-sdk/client-s3';
-import formidable, {IncomingForm} from 'formidable';
-
-import multer from 'multer';
-import multerS3 from 'multer-s3';
-import {S3} from "aws-sdk";
+import express, {response} from "express";
+import formidable from 'formidable';
+import { S3 } from "aws-sdk";
 import * as fs from "fs";
+import {updateFile} from "../database/upload-files";
 
 const bucket = new S3(
     {
@@ -32,9 +29,12 @@ export const uploadFiles = async (req: express.Request, res: express.Response) =
         const readFile = await fs.readFileSync(filePath);
         // console.log(readFile);
         const result = await bucket.upload({Body: readFile, Key: fileName, Bucket: 'joblynk-subcontractor-documents'}).promise();
-        console.log(result)
+        console.log(result.Key)
         // if successful, save the S3 location bucket in DB
-        res.json('testing');
+        let split = result.Key.split('/');
+        const email = split[0];
+        const responseFromUpdateFile = await updateFile(email, result.Key);
+        res.json(JSON.stringify(response));
     } catch (e) {
         console.log('entered', e);
         res.status(400).json(JSON.stringify(e));

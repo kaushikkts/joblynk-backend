@@ -1,6 +1,6 @@
 import {connectToDatabase} from "./database-functions";
 import {MongoClient, ObjectId} from "mongodb";
-import { MaterialSourcesModel } from "../models/material-sources.model";
+import {MaterialAndSources, MaterialSourcesModel} from "../models/material-sources.model";
 
 const DB_NAME = 'joblynk';
 const COLLECTION = 'contractor';
@@ -61,20 +61,27 @@ export const deleteASource = async(materialSource: MaterialSourcesModel) => {
     }
 }
 
-export const updateASource = async(source: MaterialSourcesModel) => {
+export const updateMaterialAndSources = async(source: MaterialAndSources, contractorId: string) => {
 
     let client: MongoClient;
     try {
+        console.log('Update MaterialAndSources: - ', source, contractorId);
         client = await connectToDatabase();
         // check if materialSources exists
-        const contractor = await client.db(DB_NAME).collection(COLLECTION).findOne({_id: new ObjectId(source.contractorId)});
-        console.log(contractor);
-        // if (!contractor?.materialSources) {
-        return await client.db(DB_NAME).collection(COLLECTION).updateOne({_id: new ObjectId(source.contractorId)}, {
-            $set: {
-                "materialSources": source
-            }
-        })
+        const contractor = await client.db(DB_NAME).collection(COLLECTION).findOne({_id: new ObjectId(contractorId)});
+        console.log('Found the value of the contractor: - ', contractor?.materialSources);
+        if (contractor?.materialSources) {
+            return await client.db(DB_NAME).collection(COLLECTION).updateOne({
+                _id: new ObjectId(contractorId),
+                "materialSources.material.id": source.id
+            }, {
+                $set: {
+                    "materialSources.material.$.sources": source.sources
+                }
+            })
+        } else {
+            throw "No Material and sources present to be updated";
+        }
     } catch (e) {
         console.log(`Error in updateSource database/material-sources.ts file : - ${e}`);
         throw e;

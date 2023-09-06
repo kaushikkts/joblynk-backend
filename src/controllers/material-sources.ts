@@ -3,14 +3,14 @@ import {
     createAdditionalSource,
     deleteASource,
     getAllMaterialAndSources,
-    updateASource
+    updateMaterialAndSources
 } from "../database/material-sources";
 
 export const findAllMaterialAndSources = async(req: express.Request, res: express.Response) => {
     try {
         const contractorId = req.params.contractorId;
         const materialAndSources = await getAllMaterialAndSources(contractorId);
-        console.log('Value of Material and sources: - ', materialAndSources);
+        // console.log('Value of Material and sources: - ', materialAndSources);
         return res.json(materialAndSources);
     } catch (e) {
         console.log(e);
@@ -46,8 +46,8 @@ export const deleteSource = async(req: express.Request, res: express.Response) =
 
 export const updateSource = async(req: express.Request, res: express.Response) => {
     try {
-        const data = req?.body;
-        const sources = await updateASource(data);
+        const {sourceToBeUpdated, contractorId} = req?.body;
+        const sources = await updateMaterialAndSources(sourceToBeUpdated, contractorId);
         console.log('Value of Material and sources: - ', sources);
         return res.json(sources);
     } catch (e) {
