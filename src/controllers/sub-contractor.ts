@@ -3,7 +3,7 @@ import express from "express";
 import {
     createSubContractor,
     deleteSubContractor,
-    findAllSubContractors,
+    findAllSubContractors, findDocumentsForSubcontractor,
     findSubContractor, sendRegisterSubContractorEmail, updateSubContractor
 } from "../database/sub-contractor";
 
@@ -63,7 +63,7 @@ export const updateSubcontractor = async (req: express.Request, res: express.Res
         const result = updateSubContractor(contractorId, subcontractor);
         res.json(result);
     } catch (e) {
-        return res.status(400).json(e);
+        res.status(400).json(e);
     }
 }
 
@@ -72,9 +72,20 @@ export const registerSubEmailSend = async (req: express.Request, res: express.Re
     // console.log(req.body);
     // console.log('Entered registerSubEmailSend: - ', contractorId, subcontractorEmail);
     try {
-        const result = sendRegisterSubContractorEmail(contractorId, subcontractorEmail);
-        res.json('test');
+        const result = await sendRegisterSubContractorEmail(contractorId, subcontractorEmail);
+        res.json(result.$response);
     } catch (e) {
         return res.status(400).json(e);
+    }
+}
+
+export const findSubcontractorDocuments = async (req: express.Request, res: express.Response) => {
+    const email = req.params?.subcontractorEmail;
+    console.log('controllers/subcontractor findDocuments method: - ', email);
+    try {
+        const documents = await findDocumentsForSubcontractor(email);
+        res.json(documents);
+    } catch (e) {
+        res.status(400).json(e);
     }
 }

@@ -1,5 +1,3 @@
-import * as AWS from "aws-sdk";
-import {SubcontractorModel} from "../models/subcontractor.model";
 import {MongoClient} from "mongodb";
 import {connectToDatabase} from "./database-functions";
 

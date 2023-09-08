@@ -80,11 +80,14 @@ export const updateSubContractor = async (contractorId: string, subcontractor: S
                 "subcontractors.$.address": subcontractor.address,
                 "subcontractors.$.documents": subcontractor.documents,
                 "subcontractors.$.primaryTrade": subcontractor.primaryTrade,
-                "subcontractors.$.otherTrades": subcontractor.otherTrades,
+                "subcontractors.$.secondaryTrade": subcontractor.secondaryTrade,
+                "subcontractors.$.otherTrade1": subcontractor.otherTrade1,
+                "subcontractors.$.otherTrade2": subcontractor.otherTrade2,
                 "subcontractors.$.qualityOfWork": subcontractor.qualityOfWork,
                 "subcontractors.$.areasOfImprovement": subcontractor.areasOfImprovement,
                 "subcontractors.$.notes": subcontractor.notes,
                 "subcontractors.$.status": subcontractor.status,
+                "subcontractors.$.profileGorillaStatus": subcontractor.profileGorillaStatus,
                 "subcontractors.$.hasSentEmail": subcontractor.hasSentEmail
             }
         });
@@ -173,7 +176,7 @@ export const sendRegisterSubContractorEmail = async(contractorId: string, subcon
         const findIfSubcontractorExists = await client.db(DB_NAME).collection(SUBCONTRACTOR_COLLECTION).findOne({primaryContactEmail: subcontractorEmail});
         console.log(`find subcontractor in send register email : - ${findIfSubcontractorExists}`)
         if (!findIfSubcontractorExists) {
-            let verifiedEmails = await new AWS.SES({
+            return await new AWS.SES({
                 region: 'us-east-1',
                 apiVersion: "latest"
             }).sendEmail(params).promise();
@@ -185,34 +188,51 @@ export const sendRegisterSubContractorEmail = async(contractorId: string, subcon
 }
 
 export const findVerified = async (subcontractors: SubcontractorModel[], client: MongoClient, contractorId: string) => {
-    let verifiedEmails = await new AWS.SES({
-        region: 'us-east-1',
-        apiVersion: "latest",
-    }).listIdentities().promise();
-    let status = await new AWS.SES({
-        region: 'us-east-1',
-        apiVersion: "latest"
-    }).getIdentityVerificationAttributes({Identities: verifiedEmails.Identities}).promise();
 
-    const statusMap: Map<any, any> = new Map();
-    Object.keys(status.VerificationAttributes).map((email: any) => statusMap.set(email, status.VerificationAttributes[email]));
-    statusMap.forEach((value, key, map) => console.log(key, value.VerificationStatus));
+    try {
+        let verifiedEmails = await new AWS.SES({
+            region: 'us-east-1',
+            apiVersion: "latest",
+        }).listIdentities().promise();
+        let status = await new AWS.SES({
+            region: 'us-east-1',
+            apiVersion: "latest"
+        }).getIdentityVerificationAttributes({Identities: verifiedEmails.Identities}).promise();
 
-    if (subcontractors.length) {
-        for (let sub of subcontractors) {
-            if (statusMap.has(sub.primaryContactEmail) && statusMap.get(sub.primaryContactEmail)?.VerificationStatus === 'Success') {
-                // update subcontractor objects' status to VERIFIED
-                console.log(`Setting status to verified of : - ${sub.primaryContactEmail}`);
-                await client.db(DB_NAME).collection(CONTRACTOR_COLLECTION).updateOne({
-                    _id: new ObjectId(contractorId),
-                    "subcontractors.primaryContactEmail": sub.primaryContactEmail
-                }, {
-                    $set: {
-                        "subcontractors.$.status": "VERIFIED"
-                    }
-                })
+        const statusMap: Map<any, any> = new Map();
+        Object.keys(status.VerificationAttributes).map((email: any) => statusMap.set(email, status.VerificationAttributes[email]));
+        statusMap.forEach((value, key, map) => console.log(key, value.VerificationStatus));
+
+        if (subcontractors.length) {
+            for (let sub of subcontractors) {
+                if (statusMap.has(sub.primaryContactEmail) && statusMap.get(sub.primaryContactEmail)?.VerificationStatus === 'Success') {
+                    // update subcontractor objects' status to VERIFIED
+                    console.log(`Setting status to verified of : - ${sub.primaryContactEmail}`);
+                    await client.db(DB_NAME).collection(CONTRACTOR_COLLECTION).updateOne({
+                        _id: new ObjectId(contractorId),
+                        "subcontractors.primaryContactEmail": sub.primaryContactEmail
+                    }, {
+                        $set: {
+                            "subcontractors.$.status": "VERIFIED"
+                        }
+                    })
+                }
             }
         }
+    } catch (e) {
+        throw e;
     }
 }
 
+export const findDocumentsForSubcontractor = async (email: string) => {
+    console.log('database/subcontractor findDocuments method: - ', email);
+    let client: MongoClient;
+    try {
+        client = await connectToDatabase();
+        const subcontractor: any = await client.db(DB_NAME).collection(SUBCONTRACTOR_COLLECTION).findOne({"email": email});
+        console.log('findDocumentsForSubcontractor method response : - ', subcontractor);
+        return subcontractor?.documents;
+    } catch (e) {
+        console.log('Entered error: - ', e)
+        throw e;}
+}

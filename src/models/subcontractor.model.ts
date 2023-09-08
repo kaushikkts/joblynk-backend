@@ -17,12 +17,16 @@ export interface SubcontractorModel {
   address: string;
   documents: DocumentsModel; // view all documents can be a modal
   primaryTrade: string;
+  secondaryTrade: string;
+  otherTrade1: string;
+  otherTrade2: string;
   otherTrades: []; // will add later
   qualityOfWork: string;
   areasOfImprovement: string;
   notes: string;
   status: string;
   hasSentEmail: boolean;
+  profileGorillaStatus: string;
   jobs: JobModel[];
   tradesmanQuestionnaire: TradesmanQuestionnaireModel;
 }
