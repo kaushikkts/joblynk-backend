@@ -28,12 +28,13 @@ export const uploadFiles = async (req: express.Request, res: express.Response) =
         const filePath = fields[fileName][0].filepath;
         const readFile = await fs.readFileSync(filePath);
         // console.log(readFile);
-        const result = await bucket.upload({Body: readFile, Key: fileName, Bucket: 'joblynk-subcontractor-documents'}).promise();
-        console.log(result.Key)
+        const result = await bucket.upload({Body: readFile, Key: fileName, Bucket: 'joblynk-subcontractor-documents', ACL: "public-read"}).promise();
+        console.log('Response from S3 after updating the file: - ', result);
         // if successful, save the S3 location bucket in DB
         let split = result.Key.split('/');
         const email = split[0];
-        const responseFromUpdateFile = await updateFile(email, result.Key);
+        const responseFromUpdateFile = await updateFile(email, result);
+
         res.json(JSON.stringify(response));
     } catch (e) {
         console.log('entered', e);

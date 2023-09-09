@@ -236,3 +236,28 @@ export const findDocumentsForSubcontractor = async (email: string) => {
         console.log('Entered error: - ', e)
         throw e;}
 }
+
+export const uploadTradesmanQuestionnaire = async (questionnaireForm: any, subcontractorEmail: string) => {
+    let client: MongoClient;
+    try {
+     client = await connectToDatabase();
+     return await client.db(DB_NAME).collection(SUBCONTRACTOR_COLLECTION).updateOne({"email": subcontractorEmail}, {
+         $set: {
+             tradesmanQuestionnaire: questionnaireForm
+         }
+     })
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const getTradesmanQuestionnaire = async (subcontractorEmail: string) => {
+    let client: MongoClient;
+    try {
+        client = await connectToDatabase();
+        const subcontractor =  await client.db(DB_NAME).collection(SUBCONTRACTOR_COLLECTION).findOne({"email": subcontractorEmail});
+        return subcontractor?.tradesmanQuestionnaire;
+    } catch (e) {
+        throw e;
+    }
+}
