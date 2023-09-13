@@ -72,3 +72,39 @@ export const deleteContractor = async (id: string) => {
         await client.close();
     }
 }
+
+export const getSubcontractorGaps = async (contractorId: string) => {
+    let client: MongoClient;
+    let subcontractorGaps = new Map();
+    try {
+        client = await connectToDatabase();
+        const contractor =  await client.db(DB_NAME).collection(COLLECTION).findOne({_id: new ObjectId(contractorId)});
+        return contractor?.subcontractorGaps;
+    } catch (e) {
+        throw e;
+    }
+}
+
+
+export const updateSubcontractorGaps = async (contractorId: string, subcontractorGaps: any) => {
+    let client: MongoClient;
+    try {
+        client = await connectToDatabase();
+        return await client.db(DB_NAME).collection(COLLECTION).updateOne({_id: new ObjectId(contractorId)}, {
+            $set: {
+                "subcontractorGaps": subcontractorGaps
+            }
+        });
+    } catch (e) {
+        throw e;
+    }
+}
+
+//
+// subcontractors?.forEach(s => {
+//     if (!subcontractorGaps.has(s?.primaryTrade)) {
+//         subcontractorGaps.set(s?.primaryTrade, 1);
+//     } else {
+//         subcontractorGaps.set(s?.primaryTrade, (subcontractorGaps.get(s?.primaryTrade) + 1))
+//     }
+// })
