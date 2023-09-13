@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import cors from 'cors';
 import router from "./router";
+// import serverless from 'serverless-http';
 // require('dotenv').config({path: __dirname + '/.env'});
 
 const app = express();
@@ -30,3 +31,5 @@ const server = http.createServer(app);
 server.listen(3000, () => {
     console.log(`Server running on localhost 3000`);
 })
+
+// module.exports.handler = serverless(app);

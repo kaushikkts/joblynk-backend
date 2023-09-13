@@ -2,6 +2,7 @@ import {connectToDatabase} from "./database-functions";
 import {MongoClient, ObjectId} from "mongodb";
 import {ServicePartnersModel} from "../models/service-partners.model";
 import {EmployeeModel} from "../models/employee.model";
+import {sendAppRegistrationEmail} from "./amazon.ses";
 
 const DB_NAME = 'joblynk';
 const COLLECTION = 'contractor';
@@ -11,9 +12,9 @@ export const findAllEmployees = async (contractorId: string) => {
     try {
         client = await connectToDatabase();
         // find the contractor, and then pull the Service Partner array
-        const contractor = await client.db(DB_NAME).collection(COLLECTION).findOne({_id: new ObjectId(contractorId)});
+        const contractor = await client.db(DB_NAME).collection(COLLECTION).find({_id: new ObjectId(contractorId)}).project({employees: 1}).toArray();
         console.log('Fetching the contractor object: - ', contractor);
-        return contractor?.employees ? contractor.employees : null;
+        return contractor[0]?.employees ? contractor[0]?.employees : null;
     } catch (e) {
         console.log(`Error in getAllEmployees database/employees.ts file : - ${e}`);
         throw e;
@@ -22,16 +23,18 @@ export const findAllEmployees = async (contractorId: string) => {
     }
 }
 
-export const createEmployee = async (employee: EmployeeModel, contractorId: string) => {
+export const createEmployee = async (employee: EmployeeModel, contractorId: string, contractorEmail: string) => {
 
     let client: MongoClient;
     try {
         client = await connectToDatabase();
         const existingEmployee = await client.db(DB_NAME).collection(COLLECTION).findOne({"employees.email": employee.email})
         if (!existingEmployee) {
+            employee._id = new ObjectId().toString();
+            await sendAppRegistrationEmail(employee.email, contractorEmail, "EMPLOYEE", contractorId);
             return await client.db(DB_NAME).collection(COLLECTION).updateOne({_id: new ObjectId(contractorId)}, {$addToSet: {
                     "employees": employee
-                }});
+            }});
         }
         return  {
             alreadyExists: 1,

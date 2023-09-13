@@ -14,7 +14,7 @@ export interface SubcontractorModel {
   secondaryContactLastName?: string;
   secondaryContactEmail?: string;
   secondaryContactPhone?: string;
-  address: string;
+  primaryContactAddress: string;
   documents: DocumentsModel; // view all documents can be a modal
   primaryTrade: string;
   secondaryTrade: string;

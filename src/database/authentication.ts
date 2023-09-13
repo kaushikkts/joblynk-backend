@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import { MongoClient, ObjectId } from "mongodb";
 import { connectToDatabase } from "./database-functions";
+import * as AWS from "aws-sdk";
 
 const DB_NAME = 'joblynk';
 const COLLECTION_USERS = 'users';
@@ -68,14 +69,27 @@ export const register = async (userDetails: any) => {
             return await client.db(DB_NAME).collection(COLLECTION_SUBCONTRACTOR).insertOne({
                 _id: generatedId,
                 companyName: userDetails.companyName,
+                firstName: userDetails.firstName,
+                lastName: userDetails.lastName,
                 email: userDetails.email
             })
+        }
+
+        if (userDetails.role === 'EMPLOYEE') {
+            return await client.db(DB_NAME).collection(COLLECTION_USERS).insertOne({
+                _id: generatedId,
+                email: userDetails.email,
+                password: encryptedPassword,
+                role: "EMPLOYEE",
+                contractorId: userDetails.contractorId,
+                token: token
+            });
         }
 
         // create new user in contractor table
 
     } catch (e) {
-        console.log('entered here', e);
+        console.log('entered error database/authentication.ts', e);
         throw e;
     }
 }
@@ -120,6 +134,4 @@ export const login = async (email: string, password: string) => {
     }
 }
 
-export const verifyUser = async () => {
-    return true;
-}
+

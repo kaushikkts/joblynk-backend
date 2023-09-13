@@ -10,9 +10,9 @@ export const getAllServicePartners = async (contractorId: string) => {
     try {
         client = await connectToDatabase();
         // find the contractor, and then pull the Service Partner array
-        const contractor = await client.db(DB_NAME).collection(COLLECTION).findOne({_id: new ObjectId(contractorId)});
-        console.log('Fetching the contractor object: - ', contractor);
-        return contractor?.servicePartners ? contractor.servicePartners : null;
+        const servicePartners = await client.db(DB_NAME).collection(COLLECTION).find({_id: new ObjectId(contractorId)}).project({servicePartners: 1}).toArray();
+        console.log('Fetching the service partners object: - ', servicePartners);
+        return servicePartners ? servicePartners[0].servicePartners : null;
     } catch (e) {
         console.log(`Error in getAllServicePartners database/service-partner.ts file : - ${e}`);
         throw e;
@@ -21,19 +21,6 @@ export const getAllServicePartners = async (contractorId: string) => {
     }
 }
 
-// export const getAServicePartner = async (id: string) => {
-//     let client: MongoClient;
-//     try {
-//         client = await connectToDatabase();
-//         return await client.db(DB_NAME).collection(COLLECTION).findOne({_id: new ObjectId(id)});
-//     } catch (e) {
-//         console.log(`Error in getAContractor database/contractor.ts file : - ${e}`);
-//         throw e;
-//     } finally {
-//         await client.close();
-//     }
-// }
-//
 export const createServicePartner = async (servicePartner: any) => {
     // console.log(servicePartner);
     console.log('inside the db', servicePartner);

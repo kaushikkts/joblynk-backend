@@ -20,9 +20,9 @@ export const findAllMaterialAndSources = async(req: express.Request, res: expres
 
 export const createNewSource = async(req: express.Request, res: express.Response) => {
     try {
-        const data = req?.body;
+        const {contractorId, materialSources} = req?.body;
 
-        const materialAndSources = await createAdditionalSource(data);
+        const materialAndSources = await createAdditionalSource(materialSources, contractorId);
         console.log('Value of Material and sources: - ', materialAndSources);
         return res.json(materialAndSources);
     } catch (e) {
@@ -33,9 +33,9 @@ export const createNewSource = async(req: express.Request, res: express.Response
 
 export const deleteSource = async(req: express.Request, res: express.Response) => {
     try {
-        const data = req?.body;
+        const {contractorId, materialSources} = req?.body;
 
-        const sources = await deleteASource(data);
+        const sources = await deleteASource(contractorId, materialSources);
         console.log('Value of Material and sources: - ', sources);
         return res.json(sources);
     } catch (e) {

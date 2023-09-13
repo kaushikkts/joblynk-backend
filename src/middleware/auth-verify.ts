@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
+    console.log('entered verify token')
     const token =
         req.body.token || req.query.token || req.headers["x-api-key"];
 
@@ -8,8 +9,6 @@ export const verifyToken = (req, res, next) => {
         return res.status(403).json("A token is required for authentication");
     }
     try {
-        console.log('in verify token');
-        console.log(jwt.verify(token, 'secret'));
         req.user = jwt.verify(token, 'secret');
     } catch (err) {
         console.log(err);

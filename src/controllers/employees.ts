@@ -18,9 +18,9 @@ export const getAllEmployees = async(req: express.Request, res: express.Response
 
 export const createNewEmployee = async (req: express.Request, res: express.Response) => {
 
-    const {contractorId, employee } = req.body;
+    const {contractor, employee } = req.body;
     try {
-        const result: any = await createEmployee(employee, contractorId);
+        const result: any = await createEmployee(employee, contractor.id, contractor.email);
         if (result?.alreadyExists) {
             res.status(400).json("Employee already exists");
         } else {

@@ -7,10 +7,12 @@ import {
     findDocumentsForSubcontractor,
     findSubContractor,
     getTradesmanQuestionnaire,
-    sendRegisterSubContractorEmail,
     updateSubContractor,
+    sendAgreementEmailToContractor,
     uploadTradesmanQuestionnaire
 } from "../database/sub-contractor";
+import {sendAppRegistrationEmail} from "../database/amazon.ses";
+import {sendRegistrationEmailToContractor} from "./authentication";
 
 
 export const createNewSubContractor = async (req: express.Request, res: express.Response) => {
@@ -22,7 +24,8 @@ export const createNewSubContractor = async (req: express.Request, res: express.
         const saveSubcontractor = await createSubContractor(contractorId, subcontractor);
         return res.json(saveSubcontractor);
     } catch (e) {
-        res.status(400).json(e);
+        console.log(e);
+        res.status(400).json({message: e});
     }
 }
 
@@ -54,8 +57,8 @@ export const getAllSubContractors = async (req: express.Request, res: express.Re
 
     try {
         const result = await findAllSubContractors(contractorId);
-        console.log(result);
-        return res.json(result);
+        console.log('Value of find all subs', result);
+        res.json(result);
     } catch (e) {
         res.status(400).json(e);
     }
@@ -65,7 +68,8 @@ export const updateSubcontractor = async (req: express.Request, res: express.Res
     const subcontractor = req?.body?.subcontractor;
     const contractorId = req?.body.contractorId;
     try {
-        const result = updateSubContractor(contractorId, subcontractor);
+        const result = await updateSubContractor(contractorId, subcontractor);
+        console.log('Update subcontractor controller.ts file : - ',result);
         res.json(result);
     } catch (e) {
         res.status(400).json(e);
@@ -73,14 +77,12 @@ export const updateSubcontractor = async (req: express.Request, res: express.Res
 }
 
 export const registerSubEmailSend = async (req: express.Request, res: express.Response) => {
-    const { subcontractorEmail, contractorId } = req?.body;
-    // console.log(req.body);
-    // console.log('Entered registerSubEmailSend: - ', contractorId, subcontractorEmail);
+    const { subcontractorEmail, contractorEmail } = req?.body;
     try {
-        const result = await sendRegisterSubContractorEmail(contractorId, subcontractorEmail);
-        res.json(result.$response);
+        const result = await sendAppRegistrationEmail(subcontractorEmail, contractorEmail, "SUBCONTRACTOR");
+        res.json(result?.$response);
     } catch (e) {
-        return res.status(400).json(e);
+        return res.status(400).send(e);
     }
 }
 
@@ -113,6 +115,16 @@ export const getQuestionnaire = async (req: express.Request, res: express.Respon
         const questionnaire = await getTradesmanQuestionnaire(subcontractorEmail);
         res.json(questionnaire);
     } catch (e) {
+        res.status(400).json(e);
+    }
+}
+
+export const sendTradesmanAgreementToSubcontractor = async(req: express.Request, res: express.Response) => {
+    const {subcontractorEmail, contractor} = req?.body;
+    try {
+        const result = await sendAgreementEmailToContractor(subcontractorEmail, contractor.id, contractor.email);
+        res.status(200).json(result);
+    }catch (e) {
         res.status(400).json(e);
     }
 }
