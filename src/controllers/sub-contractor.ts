@@ -80,7 +80,8 @@ export const registerSubEmailSend = async (req: express.Request, res: express.Re
     const { subcontractorEmail, contractorEmail } = req?.body;
     try {
         const result = await sendAppRegistrationEmail(subcontractorEmail, contractorEmail, "SUBCONTRACTOR");
-        res.json(result?.$response);
+        console.log('Register subcontractor send email response controlles/subcontractor.ts : - ', result);
+        res.json(result);
     } catch (e) {
         return res.status(400).send(e);
     }
@@ -121,6 +122,7 @@ export const getQuestionnaire = async (req: express.Request, res: express.Respon
 
 export const sendTradesmanAgreementToSubcontractor = async(req: express.Request, res: express.Response) => {
     const {subcontractorEmail, contractor} = req?.body;
+    console.log('controllers/subcontractor.ts sendTradesmanAgreement req.body: - ', subcontractorEmail, contractor);
     try {
         const result = await sendAgreementEmailToContractor(subcontractorEmail, contractor.id, contractor.email);
         res.status(200).json(result);

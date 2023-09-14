@@ -270,10 +270,12 @@ export const sendAgreementEmailToContractor = async (subcontractorEmail: string,
         client = await connectToDatabase();
         const contractor =  await client.db(DB_NAME).collection(CONTRACTOR_COLLECTION).findOne({_id: new ObjectId(contractorId)});
         const agreement = contractor?.documents?.tradesmanAgreement[0];
-        console.log(agreement?.location);
-        if (agreement?.location) {
-            return await emailTradesmanAgreement(subcontractorEmail, contractorEmail, agreement?.location);
+        console.log('database/subcontractor.ts sendAgreementEmail: - ', agreement?.location);
+        if (!agreement?.location) {
+            return "Tradesman agreement has not been added yet. Please upload it and then try to resend.";
         }
+
+        return await emailTradesmanAgreement(subcontractorEmail, contractorEmail, agreement?.location);
     } catch (e) {
         throw e;
     }

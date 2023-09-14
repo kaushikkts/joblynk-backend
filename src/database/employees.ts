@@ -62,7 +62,6 @@ export const updateEmployee = async (employee: EmployeeModel, contractorId: stri
                 $set: {
                     "employees.$.firstName": employee.firstName,
                     "employees.$.lastName": employee.lastName,
-                    "employees.$.gender": employee.gender,
                     "employees.$.email": employee.email,
                     "employees.$.phone": employee.phone,
                     "employees.$.title": employee.title,
