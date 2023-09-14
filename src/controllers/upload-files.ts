@@ -17,8 +17,6 @@ const bucket = new S3(
 
 export const uploadFiles = async (req: express.Request, res: express.Response) => {
 
-    // const form = new IncomingForm();
-    console.log(req.body);
     try {
         const form = await formidable({allowEmptyFiles: false});
         const [files, fields] = await form.parse(req);
@@ -28,7 +26,7 @@ export const uploadFiles = async (req: express.Request, res: express.Response) =
         const filePath = fields[fileName][0].filepath;
         const readFile = await fs.readFileSync(filePath);
         // console.log(readFile);
-        const result = await bucket.upload({Body: readFile, Key: fileName, Bucket: 'joblynk-subcontractor-documents', ACL: "public-read"}).promise();
+        const result = await bucket.upload({Body: readFile, Key: fileName, Bucket: 'sublynk-subcontractor-documents', ACL: "public-read"}).promise();
         console.log('Response from S3 after updating the file: - ', result);
         // if successful, save the S3 location bucket in DB
         let split = result.Key.split('/');
@@ -44,8 +42,6 @@ export const uploadFiles = async (req: express.Request, res: express.Response) =
 
 export const uploadContractorFiles = async (req: express.Request, res: express.Response) => {
 
-    // const form = new IncomingForm();
-    console.log(req.body);
     try {
         const form = await formidable({allowEmptyFiles: false});
         const [files, fields] = await form.parse(req);
